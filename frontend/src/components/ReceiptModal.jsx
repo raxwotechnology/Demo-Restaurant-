@@ -3,7 +3,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import axios from "axios";
 import { printReceiptToBoth } from "../utils/printReceipt";
-import LogoImage from "../upload/logo.png";
+import { LogoBase64 } from "../upload/logoBase64";
 import API_BASE_URL from "../api.js";
 
 const exportToPDF = () => {
@@ -75,7 +75,7 @@ const ReceiptModal = ({ order, onClose }) => {
     return window.location.origin + logo;
   };
 
-  const logoSrc = getAbsoluteLogo(restaurantDetails.logo) || getAbsoluteLogo(LogoImage);
+  const logoSrc = getAbsoluteLogo(restaurantDetails.logo) || getAbsoluteLogo(LogoBase64);
 
 
   // Inside ReceiptModal component
@@ -145,6 +145,10 @@ const ReceiptModal = ({ order, onClose }) => {
           <meta charset="UTF-8">
           <title>Receipt</title>
           <style>
+            @page {
+              size: auto;
+              margin: 0mm;
+            }
             body {
               font-family: Calibri, Arial, sans-serif;
               width: 275px;

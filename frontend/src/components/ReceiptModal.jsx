@@ -68,7 +68,7 @@ const ReceiptModal = ({ order, onClose }) => {
   } = order;
 
   const getAbsoluteLogo = (logo) => {
-    if (!logo) return "";
+    if (!logo || typeof logo !== "string") return "";
     if (logo.startsWith("data:") || logo.startsWith("http://") || logo.startsWith("https://")) {
       return logo;
     }
@@ -176,73 +176,81 @@ const ReceiptModal = ({ order, onClose }) => {
           </style>
         </head>
         <body>
-        <!-- ✅ SMALL CIRCULAR LOGO -->
+        <!-- Logo Section -->
         <div class="text-center mb-2">
-          <div style="width:80px;height:80px;border-radius:50%;overflow:hidden;margin:0 auto 4px;box-shadow:0 1px 2px rgba(0,0,0,0.1);">
-            <img src="${logoSrc}" alt="Logo" style="width:100%;height:100%;object-fit:cover;display:block;">
-          </div>
+          ${logoSrc ? `<img src="${logoSrc}" alt="Logo" style="width:80px; height:80px; border-radius:40px; display:inline-block;" />` : ''}
         </div>
-          <h3 class="text-center" style=" font-size:20px; "><strong>${restaurantDetails.name}</strong></h3>
-          <p class="text-center mb-1" style=" font-size:12px; ">${restaurantDetails.address}</p>
-          <p class="text-center mb-3" style=" font-size:15px; "><strong>${restaurantDetails.phone}</strong></p>
-          <hr />
+        
+        <h3 class="text-center" style="font-size:20px; font-weight:bold; margin:6px 0;">${restaurantDetails.name}</h3>
+        <p class="text-center" style="font-size:12px; margin:4px 0;">${restaurantDetails.address}</p>
+        <p class="text-center" style="font-size:15px; font-weight:bold; margin:4px 0 12px 0;">${restaurantDetails.phone}</p>
+        
+        <hr />
 
-          <div style="font-size:16px;margin-bottom:12px;">
-            <div style="display:flex;gap:4px;margin-bottom:4px; font-size:15px;">
-              <div style="width:90px;"><strong>Invoice No:</strong></div>
-              <div>${order.invoiceNo || 'N/A'}</div>
-            </div>
-            <div style="display:flex;gap:4px;margin-bottom:4px; font-size:15px;">
-              <div style="width:90px;"><strong>Date:</strong></div>
-              <div>${now}</div>
-            </div>
-            <div style="display:flex;gap:4px;margin-bottom:4px; font-size:15px;">
-              <div style="width:90px;"><strong>Customer:</strong></div>
-              <div>${order.customerName || 'Walk-in'}</div>
-            </div>
-            <div style="display:flex;gap:4px;margin-bottom:4px; font-size:15px;">
-              <div style="width:90px;"><strong>Phone:</strong></div>
-              <div>${order.customerPhone || 'N/A'}</div>
-            </div>
-            <div style="display:flex;gap:4px;margin-bottom:4px; font-size:15px;">
-              <div style="width:90px;"><strong>Order Type:</strong></div>
-              <div>${order.tableNo > 0 ? `Dine In - Table ${order.tableNo}` : `Takeaway ( ${order.deliveryType} )`}</div>
-            </div>
-            ${order.tableNo === "Takeaway" && order.deliveryType === "Delivery Service" ? `
-            <div style="display:flex;gap:4px;margin-bottom:4px; font-size:15px;">
-              <div style="width:90px;"><strong>Delivery Place:</strong></div>
-              <div>${order.deliveryPlaceName}</div>
-            </div>` : ''}
-          </div>
+        <!-- Invoice Details Table (Robust replacement for display:flex) -->
+        <table style="width:100%; border-collapse:collapse; font-size:14px; margin:8px 0;">
+          <tr>
+            <td style="width:95px; font-weight:bold; padding:2px 0; text-align:left; vertical-align:top;">Invoice No:</td>
+            <td style="padding:2px 0; text-align:left; vertical-align:top;">${order.invoiceNo || 'N/A'}</td>
+          </tr>
+          <tr>
+            <td style="width:95px; font-weight:bold; padding:2px 0; text-align:left; vertical-align:top;">Date:</td>
+            <td style="padding:2px 0; text-align:left; vertical-align:top;">${now}</td>
+          </tr>
+          <tr>
+            <td style="width:95px; font-weight:bold; padding:2px 0; text-align:left; vertical-align:top;">Customer:</td>
+            <td style="padding:2px 0; text-align:left; vertical-align:top;">${order.customerName || 'Walk-in'}</td>
+          </tr>
+          <tr>
+            <td style="width:95px; font-weight:bold; padding:2px 0; text-align:left; vertical-align:top;">Phone:</td>
+            <td style="padding:2px 0; text-align:left; vertical-align:top;">${order.customerPhone || 'N/A'}</td>
+          </tr>
+          <tr>
+            <td style="width:95px; font-weight:bold; padding:2px 0; text-align:left; vertical-align:top;">Order Type:</td>
+            <td style="padding:2px 0; text-align:left; vertical-align:top;">${order.tableNo > 0 ? `Dine In - Table ${order.tableNo}` : `Takeaway ( ${order.deliveryType} )`}</td>
+          </tr>
+          ${order.tableNo === "Takeaway" && order.deliveryType === "Delivery Service" ? `
+          <tr>
+            <td style="width:95px; font-weight:bold; padding:2px 0; text-align:left; vertical-align:top;">Delivery Place:</td>
+            <td style="padding:2px 0; text-align:left; vertical-align:top;">${order.deliveryPlaceName}</td>
+          </tr>` : ''}
+        </table>
 
-          <hr />
+        <hr />
 
-          <table style="font-size:15px;">
-            <thead>
-              <tr>
-                <th style="text-align:left;">Items</th>
-                <th style="text-align:center;">Qty</th>
-                <th style="text-align:right;">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsRows}
-              ${serviceChargeRow}
-              ${deliveryChargeRow}
-            </tbody>
-          </table>
+        <table style="width:100%; border-collapse:collapse; font-size:14px; margin:8px 0 16px 0;">
+          <thead>
+            <tr>
+              <th style="text-align:left; border-bottom:1px solid #000; padding:4px 0;">Items</th>
+              <th style="text-align:center; border-bottom:1px solid #000; padding:4px 0;">Qty</th>
+              <th style="text-align:right; border-bottom:1px solid #000; padding:4px 0;">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsRows}
+            ${serviceChargeRow}
+            ${deliveryChargeRow}
+          </tbody>
+        </table>
 
-          <hr />
+        <hr />
 
-          <h5 class="text-end mb-1" style=" font-size:16px; ">Total: ${symbol}${(order.totalPrice || 0).toFixed(2)}</h5>
+        <table style="width:100%; border-collapse:collapse; font-size:15px; margin-top:4px;">
+          <tr>
+            <td style="text-align:left; font-weight:bold; padding:4px 0;">Total:</td>
+            <td style="text-align:right; font-weight:bold; padding:4px 0;">${symbol}${(order.totalPrice || 0).toFixed(2)}</td>
+          </tr>
+        </table>
 
-          <hr />
-          <p class="text-center mb-1" style=" font-size:16px; "> <strong> Thank you for your order!</strong> </p>
-          <p class="text-center mb-1" style=" font-size:12px; ">Software By: Raxwo (Pvt) Ltd.</p>
-          <p class="text-center mb-1" style=" font-size:12px; ">Contact: 074 357 3333</p>
-          <hr />
+        ${paymentSection ? `<hr />${paymentSection}` : ''}
 
-          ${deliveryNoteSection}
+        <hr />
+        <p class="text-center" style="font-size:15px; font-weight:bold; margin:8px 0 4px 0;">Thank you for your order!</p>
+        <p class="text-center" style="font-size:12px; margin:2px 0; color:#555;">Software By: Raxwo (Pvt) Ltd.</p>
+        <p class="text-center" style="font-size:12px; margin:2px 0; color:#555;">Contact: 074 357 3333</p>
+        <hr />
+
+        ${deliveryNoteSection}
         </body>
       </html>
     `;
@@ -299,92 +307,58 @@ const ReceiptModal = ({ order, onClose }) => {
           boxShadow: "0 0 10px rgba(0,0,0,0.15)"
         }}
       >
-        {/* ✅ SMALL CIRCULAR LOGO - ON SCREEN PREVIEW */}
+        {/* Logo Section */}
         <div className="text-center mb-2">
-          <div
-            style={{
-              width: '80px',
-              height: '80px',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              margin: '0 auto 4px',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-            }}
-          >
+          {logoSrc ? (
             <img
               src={logoSrc}
               alt="Logo"
               style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                display: 'block',
+                width: '80px',
+                height: '80px',
+                borderRadius: '40px',
+                display: 'inline-block',
+                objectFit: 'cover'
               }}
             />
-          </div>
+          ) : null}
         </div>
         <h3 className="mb-1 fs-4" style={{ textAlign: "center" }}><strong>{restaurantDetails.name}</strong></h3>
         <p className="mb-0" style={{ textAlign: "center", fontSize: "13px" }}>{restaurantDetails.address}</p>
         <p className="mb-3" style={{ textAlign: "center", fontSize: "14px" }}><strong>{restaurantDetails.phone}</strong></p>
         <hr style={{ margin: "10px 4px" }}/>
-        {/* <p className="mb-1"><strong>Invoice No:</strong> {order.invoiceNo}</p>
-        <p className="mb-1"><strong>Date:</strong> {new Date().toLocaleString()}</p>
-        <p className="mb-1"><strong>Customer:</strong> {customerName}</p>
-        <p className="mb-1"><strong>Phone:</strong> {customerPhone}</p>
-        <p className="mb-1"><strong>Order Type:</strong> {tableNo > 0 ? `Dine In - Table ${tableNo}` : "Takeaway" }</p>
-        { (tableNo > 0) ? <></> : (<p><strong>Delivery Type:</strong>  {order.deliveryType}</p>)} */}
 
-        <div style={{ fontSize: "16px", marginBottom: "0px", lineHeight: "1.6" }}>
-          {/* Row */}
-          <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "15px"  }}>
-            <div style={{ width: "90px",  lineHeight: "0", paddingBottom: "4px" }}>
-              <strong>Invoice No:</strong>
-            </div>
-            <div>{order.invoiceNo}</div>
-          </div>
-
-          {/* Row */}
-          <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "15px"  }}>
-            <div style={{ width: "90px", lineHeight: "0", paddingBottom: "4px" }}>
-              <strong>Date:</strong>
-            </div>
-            <div>{new Date().toLocaleString()}</div>
-          </div>
-
-          {/* Row */}
-          <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "15px"  }}>
-            <div style={{ width: "90px",  lineHeight: "0", paddingBottom: "4px" }}>
-              <strong>Customer:</strong>
-            </div>
-            <div>{customerName}</div>
-          </div>
-
-          {/* Row */}
-          <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "15px"  }}>
-            <div style={{ width: "90px",  lineHeight: "0", paddingBottom: "4px" }}>
-              <strong>Phone:</strong>
-            </div>
-            <div>{customerPhone}</div>
-          </div>
-
-          {/* Row */}
-          <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "15px"  }}>
-            <div style={{ width: "90px", lineHeight: "0", paddingBottom: "4px" }}>
-              <strong>Order Type:</strong>
-            </div>
-            <div>{tableNo > 0 ? `Dine In - Table ${tableNo}` : `Takeaway ( ${order.deliveryType} )`}</div>
-          </div>
-
-          {/* Conditional Row */}
-          {tableNo === "Takeaway" && order.deliveryType === "Delivery Service" && (
-            <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "15px"  }}>
-              <div style={{ width: "90px",  lineHeight: "0", paddingBottom: "4px" }}>
-                <strong>Delivery Place:</strong>
-              </div>
-              <div>{order.deliveryPlaceName}</div>
-            </div>
-          )}
-        </div>
+        {/* Invoice Details Table (Robust replacement for display:flex) */}
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px", margin: "8px 0", lineHeight: "1.4" }}>
+          <tbody>
+            <tr>
+              <td style={{ width: "95px", fontWeight: "bold", padding: "2px 0", textAlign: "left", verticalAlign: "top" }}>Invoice No:</td>
+              <td style={{ padding: "2px 0", textAlign: "left", verticalAlign: "top" }}>{order.invoiceNo || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style={{ width: "95px", fontWeight: "bold", padding: "2px 0", textAlign: "left", verticalAlign: "top" }}>Date:</td>
+              <td style={{ padding: "2px 0", textAlign: "left", verticalAlign: "top" }}>{new Date().toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td style={{ width: "95px", fontWeight: "bold", padding: "2px 0", textAlign: "left", verticalAlign: "top" }}>Customer:</td>
+              <td style={{ padding: "2px 0", textAlign: "left", verticalAlign: "top" }}>{customerName || 'Walk-in'}</td>
+            </tr>
+            <tr>
+              <td style={{ width: "95px", fontWeight: "bold", padding: "2px 0", textAlign: "left", verticalAlign: "top" }}>Phone:</td>
+              <td style={{ padding: "2px 0", textAlign: "left", verticalAlign: "top" }}>{customerPhone || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style={{ width: "95px", fontWeight: "bold", padding: "2px 0", textAlign: "left", verticalAlign: "top" }}>Order Type:</td>
+              <td style={{ padding: "2px 0", textAlign: "left", verticalAlign: "top" }}>{tableNo > 0 ? `Dine In - Table ${tableNo}` : `Takeaway ( ${order.deliveryType} )`}</td>
+            </tr>
+            {tableNo === "Takeaway" && order.deliveryType === "Delivery Service" && (
+              <tr>
+                <td style={{ width: "95px", fontWeight: "bold", padding: "2px 0", textAlign: "left", verticalAlign: "top" }}>Delivery Place:</td>
+                <td style={{ padding: "2px 0", textAlign: "left", verticalAlign: "top" }}>{order.deliveryPlaceName}</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
 
         <hr style={{ margin: "10px 4px" }}/>
 

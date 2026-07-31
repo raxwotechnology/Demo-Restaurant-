@@ -18,6 +18,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
   "https://demo-restaurant-v6g2.onrender.com",
+  "https://demo-restaurant-8ntz.onrender.com",
   /\.netlify\.app$/,         // any Netlify subdomain
   /\.netlify\.live$/,        // Netlify live previews
 ];

@@ -6,7 +6,7 @@ const getApiBaseUrl = () => {
   ) {
     return "http://localhost:5000";
   }
-  return "https://demo-restaurant-v6g2.onrender.com";
+  return process.env.REACT_APP_API_BASE_URL || "https://demo-restaurant-8ntz.onrender.com";
 };
 
 const API_BASE_URL = getApiBaseUrl();

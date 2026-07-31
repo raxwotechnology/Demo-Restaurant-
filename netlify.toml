@@ -4,7 +4,7 @@
   publish = "build"
 
 [build.environment]
-  REACT_APP_API_BASE_URL = "https://demo-restaurant-v6g2.onrender.com"
+  REACT_APP_API_BASE_URL = "https://demo-restaurant-8ntz.onrender.com"
   NODE_VERSION = "18"
   SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
 
